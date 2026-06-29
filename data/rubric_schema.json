@@ -1,0 +1,19 @@
+{
+  "item_id": "string",
+  "prompt": "string",
+  "response": "string",
+  "scores": {
+    "general_quality": "integer 1-5",
+    "factuality": "integer 1-5",
+    "reasoning": "integer 1-5",
+    "instruction_following": "integer 1-5",
+    "safety": "integer 1-5",
+    "tone": "integer 1-5"
+  },
+  "reviewer_comment": "string",
+  "computed_fields": {
+    "average_score": "number",
+    "lowest_dimension": "string",
+    "needs_follow_up": "boolean"
+  }
+}
