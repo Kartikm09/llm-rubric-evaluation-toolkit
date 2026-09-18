@@ -3,9 +3,10 @@
 from __future__ import annotations
 
 import argparse
-import csv
 from collections import Counter
 from pathlib import Path
+
+from score_validation import load_scored_rows, validated_scores
 
 
 SCORE_COLUMNS = [
@@ -23,13 +24,15 @@ def main() -> int:
     parser.add_argument("csv_path", type=Path)
     args = parser.parse_args()
 
-    with args.csv_path.open(newline="", encoding="utf-8") as handle:
-        rows = list(csv.DictReader(handle))
+    try:
+        rows = load_scored_rows(args.csv_path, SCORE_COLUMNS)
+    except ValueError as error:
+        parser.error(str(error))
 
     weak_dimensions: Counter[str] = Counter()
     comments: list[str] = []
     for row in rows:
-        scores = {column: int(row[column]) for column in SCORE_COLUMNS}
+        scores = validated_scores(row, SCORE_COLUMNS)
         weakest = min(scores, key=scores.get)
         if scores[weakest] <= 3:
             weak_dimensions[weakest] += 1
