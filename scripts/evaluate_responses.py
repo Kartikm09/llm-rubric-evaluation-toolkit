@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 import argparse
-import csv
 from pathlib import Path
+
+from score_validation import load_scored_rows, validated_scores
 
 
 SCORE_COLUMNS = [
@@ -18,17 +19,16 @@ SCORE_COLUMNS = [
 
 
 def load_rows(path: Path) -> list[dict[str, str]]:
-    with path.open(newline="", encoding="utf-8") as handle:
-        return list(csv.DictReader(handle))
+    return load_scored_rows(path, SCORE_COLUMNS)
 
 
 def row_average(row: dict[str, str]) -> float:
-    scores = [int(row[column]) for column in SCORE_COLUMNS]
+    scores = list(validated_scores(row, SCORE_COLUMNS).values())
     return round(sum(scores) / len(scores), 2)
 
 
 def weakest_dimension(row: dict[str, str]) -> str:
-    scores = {column: int(row[column]) for column in SCORE_COLUMNS}
+    scores = validated_scores(row, SCORE_COLUMNS)
     return min(scores, key=scores.get)
 
 
@@ -37,7 +37,10 @@ def main() -> int:
     parser.add_argument("csv_path", type=Path)
     args = parser.parse_args()
 
-    rows = load_rows(args.csv_path)
+    try:
+        rows = load_rows(args.csv_path)
+    except ValueError as error:
+        parser.error(str(error))
     print("item_id,average_score,weakest_dimension,needs_follow_up")
     for row in rows:
         average = row_average(row)

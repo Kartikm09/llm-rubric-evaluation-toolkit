@@ -93,3 +93,17 @@ Rubric-based evaluation creates structured evidence that can be used for:
 ## LinkedIn Project Description
 
 Created a practical LLM rubric evaluation toolkit for scoring AI outputs across factuality, reasoning, instruction following, safety, tone, and general response quality. The project includes reusable rubrics, scored examples, feedback templates, a sample evaluation dataset, an Excel scoring template, and Python scripts for score summaries and evaluator feedback.
+
+## Verification
+
+Run `make verify` (or `python3 -m unittest discover -s tests -v`). The
+standard-library suite uses independent synthetic fixtures and command-line
+checks, including malformed inputs. GitHub CI runs the same command on Python
+3.11. These checks verify the reporting code; they do not measure a live model
+or validate the truth of a human-assigned score.
+
+Score-reporting commands reject missing, blank, noninteger, or out-of-range
+scores with a clear error. The documented scale is 1–5; missing assessments
+are data errors and are not converted into model failures.
+
+See [repair scope and evidence](docs/verified-repair.md).
